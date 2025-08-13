@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jadwal Pelajaran Kelas 9A - SMP Negeri 64 Jakarta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220aa;
+      --glass:#ffffff10;
+      --accent:#7c3aed;
+      --muted:#cbd5e1;
+      --card-2: rgba(255,255,255,0.04);
+      --glass-2: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      --glass-border: rgba(255,255,255,0.06);
+      --glass-strong: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.15), transparent 10%),
+                  radial-gradient(ellipse at 90% 90%, rgba(14,165,233,0.08), transparent 10%),
+                  var(--bg);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
+    }
+
+    /* canvas particles sits behind */
+    #particles {
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:1100px;
+      margin:40px auto;
+      padding:28px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:20px;
+    }
+    .logo{
+      width:74px;
+      height:74px;
+      border-radius:12px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--glass-border);
+      box-shadow: 0 6px 20px rgba(2,6,23,0.6), inset 0 -6px 18px rgba(255,255,255,0.02);
+      color:white;
+      font-weight:700;
+      font-size:14px;
+    }
+    h1{
+      margin:0;
+      color:#fff;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+    p.lead{
+      margin:4px 0 0 0;
+      color: #cbd5e1;
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+
+    /* card */
+    .card{
+      background:var(--card-2);
+      border-radius:14px;
+      padding:18px;
+      border:1px solid var(--glass-border);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+      backdrop-filter: blur(6px) saturate(120%);
+    }
+
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .meta .date{
+      font-size:12px;
+      color: #aab6c7;
+    }
+    .meta .badge{
+      padding:6px 10px;
+      background:linear-gradient(90deg,var(--accent), #06b6d4);
+      border-radius:999px;
+      color:white;
+      font-weight:600;
+      font-size:12px;
+      box-shadow:0 6px 18px rgba(124,58,237,0.18);
+    }
+
+    /* days row */
+    .days{
+      display:grid;
+      grid-template-columns: repeat(1,1fr);
+      gap:12px;
+    }
+
+    @media(min-width:860px){
+      .days{
+        grid-template-columns: repeat(3,1fr);
+      }
+      .grid{grid-template-columns:1fr 360px}
+    }
+
+    .day{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:10px;
+      padding:12px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .day h3{
+      margin:0 0 8px 0;
+      font-size:15px;
+      color:#fff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      color:var(--muted);
+    }
+    th,td{
+      padding:8px 6px;
+      text-align:left;
+      border-bottom:1px dashed rgba(255,255,255,0.03);
+    }
+    th{
+      font-weight:600;
+      font-size:12px;
+      color:#e6eef8;
+      text-transform:uppercase;
+      letter-spacing:0.6px;
+    }
+    td.small{font-size:12px;color:#9fb3c9}
+    .subject{font-weight:600;color:#fff}
+    .teacher{font-size:12px;color:#a6c0d6}
+    .time{font-weight:700;color:#dbeafe;font-size:12px}
+
+    /* right panel */
+    .aside{
+      position:sticky;
+      top:22px;
+      height:fit-content;
+    }
+    .note{
+      padding:12px;
+      border-radius:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.03);
+      color:#cbd5e1;
+      font-size:13px;
+    }
+
+    footer{
+      margin-top:18px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      color:#9fb3c9;
+      font-size:13px;
+    }
+
+    .signature{
+      text-align:center;
+      padding:14px;
+      border-radius:8px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* small helpers */
+    .muted{color:#9fb3c9;font-size:13px}
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="wrap">
+    <header>
+      <div class="logo">SMP 64</div>
+      <div>
+        <h1>Jadwal Pelajaran Kelas 9A</h1>
+        <p class="lead">Semester Ganjil — Tahun Ajaran 2025/2026 · SMP Negeri 64 Jakarta</p>
+      </div>
+      <div style="margin-left:auto" class="meta" aria-hidden="true">
+        <div class="date">Mulai berlaku: Senin, 14 Juli 2025</div>
+        <div class="badge">Kelas 9A</div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="meta">
+          <div class="muted">Jadwal lengkap — lihat per hari</div>
+          <div class="muted">Waktu setiap jam sesuai sekolah</div>
+        </div>
+
+        <div class="days">
+          <!-- SENIN -->
+          <div class="day">
+            <h3>Senin</h3>
+            <table>
+              <thead>
+                <tr><th>Jam</th><th>Mata Pelajaran</th><th>Guru</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="time">06:30 - 07:30</td><td class="subject">Upacara / Pembinaan Wali Kelas</td><td class="teacher">—</td></tr>
+                <tr><td class="time">07:30 - 08:10</td><td class="subject">Bahasa Inggris</td><td class="teacher">Hendrawan Yunardi, M.Pd.</td></tr>
+                <tr><td class="time">08:10 - 08:50</td><td class="subject">Bahasa Inggris</td><td class="teacher">Hendrawan Yunardi, M.Pd.</td></tr>
+                <tr><td class="time">08:50 - 09:30</td><td class="subject">Prakarya</td><td class="teacher">Fitria Hanum, S.Pd.</td></tr>
+                <tr><td class="time">09:30 - 09:50</td><td class="subject small">Istirahat</td><td class="teacher">—</td></tr>
+                <tr><td class="time">09:50 - 10:30</td><td class="subject">Prakarya</td><td class="teacher">Fitria Hanum, S.Pd.</td></tr>
+                <tr><td class="time">10:30 - 11:10</td><td class="subject">Prakarya</td><td class="teacher">Fitria Hanum, S.Pd.</td></tr>
+                <tr><td class="time">11:10 - 11:50</td><td class="subject">Ilmu Pengetahuan Alam</td><td class="teacher">Debora Sumarti T., S.Pd.</td></tr>
+                <tr><td class="time">11:50 - 12:20</td><td class="subject small">Istirahat / Sholat Dzuhur Berjamaah</td><td class="teacher">—</td></tr>
+                <tr><td class="time">12:20 - 13:00</td><td class="subject">Ilmu Pengetahuan Alam</td><td class="teacher">Debora Sumarti T., S.Pd.</td></tr>
+                <tr><td class="time">13:00 - 13:40</td><td class="subject">Ilmu Pengetahuan Alam</td><td class="teacher">Debora Sumarti T., S.Pd.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SELASA -->
+          <div class="day">
+            <h3>Selasa</h3>
+            <table>
+              <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Guru</th></tr></thead>
+              <tbody>
+                <tr><td class="time">06:30 - 06:50</td><td class="subject">Tadarus</td><td class="teacher">—</td></tr>
+                <tr><td class="time">06:50 - 07:30</td><td class="subject">PJOK</td><td class="teacher">Tito Diyaksa P., S.Pd.</td></tr>
+                <tr><td class="time">07:30 - 08:10</td><td class="subject">PJOK</td><td class="teacher">Tito Diyaksa P., S.Pd.</td></tr>
+                <tr><td class="time">08:10 - 08:50</td><td class="subject">PJOK</td><td class="teacher">Tito Diyaksa P., S.Pd.</td></tr>
+                <tr><td class="time">08:50 - 09:30</td><td class="subject">Ilmu Pengetahuan Alam</td><td class="teacher">Debora Sumarti T., S.Pd.</td></tr>
+                <tr><td class="time">09:30 - 09:50</td><td class="subject small">Istirahat</td><td class="teacher">—</td></tr>
+                <tr><td class="time">09:50 - 10:30</td><td class="subject">Ilmu Pengetahuan Alam</td><td class="teacher">Debora Sumarti T., S.Pd.</td></tr>
+                <tr><td class="time">10:30 - 11:10</td><td class="subject">Ilmu Pengetahuan Sosial</td><td class="teacher">Tri Widayati, S.Pd.</td></tr>
+                <tr><td class="time">11:10 - 11:50</td><td class="subject">Ilmu Pengetahuan Sosial</td><td class="teacher">Tri Widayati, S.Pd.</td></tr>
+                <tr><td class="time">11:50 - 12:20</td><td class="subject small">Istirahat / Sholat Dzuhur</td><td class="teacher">—</td></tr>
+                <tr><td class="time">12:20 - 13:00</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+                <tr><td class="time">13:00 - 13:40</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- RABU -->
+          <div class="day">
+            <h3>Rabu</h3>
+            <table>
+              <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Guru</th></tr></thead>
+              <tbody>
+                <tr><td class="time">06:30 - 07:30</td><td class="subject">Senam / Aktualisasi / Literasi Numerasi</td><td class="teacher">—</td></tr>
+                <tr><td class="time">07:30 - 08:10</td><td class="subject">Informatika</td><td class="teacher">Estu Pratiwi, S.Kom</td></tr>
+                <tr><td class="time">08:10 - 08:50</td><td class="subject">Informatika</td><td class="teacher">Estu Pratiwi, S.Kom</td></tr>
+                <tr><td class="time">08:50 - 09:30</td><td class="subject">Informatika</td><td class="teacher">Estu Pratiwi, S.Kom</td></tr>
+                <tr><td class="time">09:30 - 09:50</td><td class="subject small">Istirahat</td><td class="teacher">—</td></tr>
+                <tr><td class="time">09:50 - 10:30</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+                <tr><td class="time">10:30 - 11:10</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+                <tr><td class="time">11:10 - 11:50</td><td class="subject">Bimbingan Konseling</td><td class="teacher">Bayu Triantoro, S.Pd.</td></tr>
+                <tr><td class="time">11:50 - 12:20</td><td class="subject small">Istirahat / Sholat Dzuhur</td><td class="teacher">—</td></tr>
+                <tr><td class="time">12:20 - 13:00</td><td class="subject">Matematika</td><td class="teacher">Wiji Eka Cahyani, S.Pd.</td></tr>
+                <tr><td class="time">13:00 - 13:40</td><td class="subject">Matematika</td><td class="teacher">Wiji Eka Cahyani, S.Pd.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- KAMIS -->
+          <div class="day">
+            <h3>Kamis</h3>
+            <table>
+              <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Guru</th></tr></thead>
+              <tbody>
+                <tr><td class="time">06:30 - 06:50</td><td class="subject">Tadarus</td><td class="teacher">—</td></tr>
+                <tr><td class="time">06:50 - 07:30</td><td class="subject">Ilmu Pengetahuan Sosial</td><td class="teacher">Tri Widayati, S.Pd.</td></tr>
+                <tr><td class="time">07:30 - 08:10</td><td class="subject">Ilmu Pengetahuan Sosial</td><td class="teacher">Tri Widayati, S.Pd.</td></tr>
+                <tr><td class="time">08:10 - 08:50</td><td class="subject">Bahasa Inggris</td><td class="teacher">Hendrawan Yunardi, M.Pd.</td></tr>
+                <tr><td class="time">08:50 - 09:30</td><td class="subject">Bahasa Inggris</td><td class="teacher">Hendrawan Yunardi, M.Pd.</td></tr>
+                <tr><td class="time">09:30 - 09:50</td><td class="subject small">Istirahat</td><td class="teacher">—</td></tr>
+                <tr><td class="time">09:50 - 10:30</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+                <tr><td class="time">10:30 - 11:10</td><td class="subject">Bahasa Indonesia</td><td class="teacher">Dwi Maryanti, S.Pd.</td></tr>
+                <tr><td class="time">11:10 - 11:50</td><td class="subject">Matematika</td><td class="teacher">Wiji Eka Cahyani, S.Pd.</td></tr>
+                <tr><td class="time">11:50 - 12:20</td><td class="subject small">Istirahat / Sholat Dzuhur</td><td class="teacher">—</td></tr>
+                <tr><td class="time">12:20 - 13:00</td><td class="subject">Matematika</td><td class="teacher">Wiji Eka Cahyani, S.Pd.</td></tr>
+                <tr><td class="time">13:00 - 13:40</td><td class="subject">Matematika</td><td class="teacher">Wiji Eka Cahyani, S.Pd.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- JUMAT -->
+          <div class="day">
+            <h3>Jumat</h3>
+            <table>
+              <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Guru</th></tr></thead>
+              <tbody>
+                <tr><td class="time">06:30 - 07:10</td><td class="subject small">Solat Dhuha dan Doa Bersama</td><td class="teacher">—</td></tr>
+                <tr><td class="time">07:10 - 07:50</td><td class="subject">Pendidikan Agama & Budi Pekerti</td><td class="teacher">Muhamad Soleh, S.Pd.</td></tr>
+                <tr><td class="time">07:50 - 08:30</td><td class="subject">Pendidikan Agama & Budi Pekerti</td><td class="teacher">Muhamad Soleh, S.Pd.</td></tr>
+                <tr><td class="time">08:30 - 09:10</td><td class="subject">Pendidikan Pancasila</td><td class="teacher">Drs. Achmad Mastar</td></tr>
+                <tr><td class="time">09:10 - 09:50</td><td class="subject small">Istirahat</td><td class="teacher">—</td></tr>
+                <tr><td class="time">09:50 - 10:30</td><td class="subject">Pendidikan Pancasila</td><td class="teacher">Drs. Achmad Mastar</td></tr>
+                <tr><td class="time">10:30 - 11:10</td><td class="subject">Pendidikan Pancasila</td><td class="teacher">Drs. Achmad Mastar</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <footer>
+          <div class="muted">Catatan: Jam & guru disusun sesuai foto — sunting bila perlu.</div>
+          <div class="signature">
+            Kepala SMP Negeri 64 Jakarta<br>
+            <strong>Ayi Mumuh Suhendar, M.Pd.</strong>
+          </div>
+        </footer>
+      </section>
+
+      <aside class="card aside">
+        <div class="note">
+          <h4 style="margin:0 0 8px 0;color:#fff">Informasi Cepat</h4>
+          <p style="margin:0 0 8px 0">Kelas: <strong>9A</strong><br>
+            Semester: <strong>Ganjil 2025/2026</strong><br>
+            Sekolah: <strong>SMP Negeri 64 Jakarta</strong>
+          </p>
+          <p style="margin:0;font-size:13px;color:#a8c0d8">Ingin ubah jadwal atau menambahkan logo sekolah? Kirim perubahan dan saya perbarui file HTML-nya.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // Simple particle system (no external lib) - subtle motion
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = innerWidth;
+    let h = canvas.height = innerHeight;
+    const particles = [];
+    const count = Math.round(Math.max(20, Math.min(120, (w*h)/80000)));
+
+    function rand(min,max){ return Math.random()*(max-min)+min }
+    function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
+    window.addEventListener('resize', resize);
+
+    class P {
+      constructor(){
+        this.x = rand(0,w);
+        this.y = rand(0,h);
+        this.r = rand(0.6,2.4);
+        this.vx = rand(-0.3,0.3);
+        this.vy = rand(-0.2,0.6);
+        this.alpha = rand(0.12,0.7);
+      }
+      step(){
+        this.x += this.vx;
+        this.y += this.vy;
+        if(this.x < -50) this.x = w+50;
+        if(this.x > w+50) this.x = -50;
+        if(this.y > h+50) this.y = -50;
+        if(this.y < -50) this.y = h+50;
+      }
+      draw(){
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(124,58,237,'+this.alpha+')';
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    function init(){
+      particles.length = 0;
+      for(let i=0;i<count;i++) particles.push(new P());
+      animate();
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,w,h);
+      // subtle gradient overlay
+      const g = ctx.createLinearGradient(0,0,w,h);
+      g.addColorStop(0, 'rgba(124,58,237,0.02)');
+      g.addColorStop(1, 'rgba(6,182,212,0.02)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+
+      for(let i=0;i<particles.length;i++){
+        particles[i].step();
+        particles[i].draw();
+      }
+
+      // connect some close particles lightly
+      for(let i=0;i<particles.length;i++){
+        for(let j=i+1;j<particles.length;j++){
+          const a = particles[i], b = particles[j];
+          const dx = a.x-b.x, dy = a.y-b.y;
+          const d2 = dx*dx+dy*dy;
+          if(d2 < 9000){
+            const alpha = 0.005 * (9000 - d2);
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+            ctx.strokeStyle = 'rgba(124,58,237,'+ (alpha * 0.6) +')';
+            ctx.lineWidth = 0.7;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    init();
+
+    // Optional: click to add a burst
+    canvas.addEventListener('click', (e)=>{
+      for(let i=0;i<8;i++){
+        const p = new P();
+        p.x = e.clientX + rand(-20,20);
+        p.y = e.clientY + rand(-20,20);
+        p.vx = rand(-1.2,1.2);
+        p.vy = rand(-1.2,1.2);
+        p.alpha = 0.9;
+        particles.push(p);
+        if(particles.length > 300) particles.splice(0, particles.length-300);
+      }
+    });
+  </script>
+</body>
+</html>
